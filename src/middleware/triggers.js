@@ -41,7 +41,7 @@ export async function addTrigger(ctx) {
 
     await triggering.addTrigger(triggerMatch, replyText);
 
-    ctx.replyMD('Добавил');
+    ctx.replyHTML(`Добавил триггер <b>${triggerMatch}</b>`);
 
   } catch (e) {
     error(command, message.text);
@@ -62,7 +62,7 @@ export async function delTrigger(ctx) {
 
     await triggering.rmTrigger(triggerMatch);
 
-    ctx.replyHTML(`Удалил триггер <b>${match}</b>`);
+    ctx.replyHTML(`Удалил триггер <b>${triggerMatch}</b>`);
 
   } catch (e) {
     error(command, message.text);
@@ -95,7 +95,9 @@ export async function trigger(ctx, next) {
     const reply = await triggering.getTrigger(triggerKey);
     debug('trigger', fromUserId, triggerKey, reply);
 
-    ctx.reply(reply);
+    const finalReply = reply.replace(/\|/g, '\n');
+
+    ctx.reply(finalReply);
 
   } catch (e) {
     error(text, e.name, e.message);
