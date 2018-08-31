@@ -4,7 +4,12 @@
   "description": "13th Galeon ChatWars helper telegram bot",
   "main": "src/index.js",
   "scripts": {
-    "test": "npm run lint"
+    "lint": "eslint src",
+    "test": "npm run lint",
+    "babel-node": "babel-node",
+    "start": "nodemon --exec 'npm run lint && babel-node' -- src/index.js",
+    "pkg": "cp package.json dist",
+    "build": "npm run lint && babel src -d dist && npm run pkg"
   },
   "repository": {
     "type": "git",
