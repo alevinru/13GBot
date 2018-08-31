@@ -7,7 +7,7 @@ export async function hello(ctx) {
 
   const { session, from: { id: userId, first_name: firstName } } = ctx;
 
-  debug('/hello', userId, firstName);
+  debug('/hello', userId, firstName, ctx.from);
 
   if (!session.auth) {
     debug('no auth');

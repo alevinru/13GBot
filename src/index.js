@@ -3,9 +3,10 @@ import log from './services/log';
 import session from './services/session';
 import bot, { BOT_ID } from './services/bot';
 
-
 import start from './middleware/start';
 import { hello } from './middleware/hello';
+import etc from './middleware/message';
+import * as triggers from './middleware/triggers';
 
 const { debug, error } = log('index');
 
@@ -28,10 +29,18 @@ bot.command('hello', hello);
 // bot.command('users', users.listUsers);
 
 /*
+Triggers
+ */
+
+bot.command('triggers', triggers.triggerList);
+// bot.command('trigger_add', triggers.addTrigger);
+bot.hears(/^(\/add_trigger) ([^ ]+) (.+)$/, triggers.addTrigger);
+
+/*
 Other
  */
 
-// bot.on('message', require('./middleware/message').default);
+bot.on('message', triggers.trigger, etc);
 
 bot.startPolling();
 debug('Start polling');
