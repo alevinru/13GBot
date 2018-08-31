@@ -1,0 +1,8 @@
+{
+  "env": {
+    "DEBUG": "laa:*",
+    "PHRASE_NOT_IMPLEMENTED": "I don't understand this kind of messages",
+    "REDIS_DB": 2,
+    "BOT_USER_NAME": "CWClientAppBot"
+  }
+}
