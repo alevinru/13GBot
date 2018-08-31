@@ -4,6 +4,7 @@ import session from './services/session';
 import bot, { BOT_ID } from './services/bot';
 
 import start from './middleware/start';
+import { adminOnly, grant } from './middleware/auth';
 import { hello } from './middleware/hello';
 import etc from './middleware/message';
 import * as triggers from './middleware/triggers';
@@ -27,6 +28,7 @@ bot.command('start', start);
 // bot.command('auth', auth);
 bot.command('hello', hello);
 // bot.command('users', users.listUsers);
+bot.hears(/\/grant ([^ ]+) (\d+)/, adminOnly(grant));
 
 /*
 Triggers
@@ -34,8 +36,8 @@ Triggers
 
 bot.command('triggers', triggers.triggerList);
 // bot.command('trigger_add', triggers.addTrigger);
-bot.hears(/^(\/add_trigger) ([^ ]+) (.+)$/, triggers.addTrigger);
-bot.hears(/^(\/del_trigger) ([^ ]+)$/, triggers.delTrigger);
+bot.hears(/^(\/add_trigger) ([^ ]+) (.+)$/, adminOnly(triggers.addTrigger));
+bot.hears(/^(\/del_trigger) ([^ ]+)$/, adminOnly(triggers.delTrigger));
 
 /*
 Other

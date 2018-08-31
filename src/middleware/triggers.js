@@ -9,8 +9,6 @@ const { debug, error } = log('mw:triggers');
 export async function triggerList(ctx) {
 
   const { from: { id: fromUserId }, message: { text } } = ctx;
-  // const { match } = ctx;
-  // const [command] = match;
 
   debug(text, fromUserId);
 
@@ -77,6 +75,10 @@ export async function delTrigger(ctx) {
 export async function trigger(ctx, next) {
 
   const { from: { id: fromUserId }, message: { text } } = ctx;
+
+  if (!text) {
+    return;
+  }
 
   try {
 

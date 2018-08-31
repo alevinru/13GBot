@@ -24,10 +24,17 @@ export async function hello(ctx) {
 
   function replyResults() {
 
-    ctx.replyMD([
+    const response = [
       `Hi there, *${firstName}*!\n`,
       `Your user id is *${userId}*`,
-    ]);
+    ];
+
+
+    if (session.isAdmin) {
+      response.push('\nТы админ, кстати!');
+    }
+
+    ctx.replyMD(response);
 
   }
 
