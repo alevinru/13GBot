@@ -1,7 +1,7 @@
 # 13GBot
 13th Galeon ChatWars helper Telegram bot
 
-## Perquisites
+## Prerequisites
 
 Bot needs a connection to a [https://redis.io](Redis) database to store its data.
 So you need to build and run your own Redis instance.
