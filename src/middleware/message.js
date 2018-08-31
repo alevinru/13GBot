@@ -9,7 +9,7 @@ export default async function (ctx, next) {
   await next();
 
   const {
-    message,
+    // message,
     message: { forward_from: forwardFrom, text },
     from: { id: userId, username, first_name: firstName },
     chat: { id: chatId },
@@ -22,7 +22,7 @@ export default async function (ctx, next) {
   }
 
   debug('from:', userId, forwardFrom || '(not a forward)', text);
-  debug(JSON.stringify(message));
+  // debug(JSON.stringify(message));
   reply(PHRASE_NOT_IMPLEMENTED);
 
 }

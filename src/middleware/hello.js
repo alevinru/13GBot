@@ -25,13 +25,13 @@ export async function hello(ctx) {
   function replyResults() {
 
     const response = [
-      `Hi there, *${firstName}*!\n`,
-      `Your user id is *${userId}*`,
+      `Привет, *${firstName}*!\n`,
+      `Твой юзер ид в Телеграм: *${userId}*`,
     ];
 
 
     if (session.isAdmin) {
-      response.push('\nТы админ, кстати!');
+      response.push('\nТы мой админ, кстати!');
     }
 
     ctx.replyMD(response);

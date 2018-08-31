@@ -62,7 +62,7 @@ export async function delTrigger(ctx) {
 
     await triggering.rmTrigger(triggerMatch);
 
-    ctx.replyMD('Удалил');
+    ctx.replyHTML(`Удалил триггер <b>${match}</b>`);
 
   } catch (e) {
     error(command, message.text);
