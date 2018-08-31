@@ -1,0 +1,19 @@
+{
+  "name": "13gbot",
+  "version": "1.0.0",
+  "description": "13th Galeon ChatWars helper telegram bot",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/alevinru/13GBot.git"
+  },
+  "author": "Alexander Levin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alevinru/13GBot/issues"
+  },
+  "homepage": "https://github.com/alevinru/13GBot#readme"
+}
