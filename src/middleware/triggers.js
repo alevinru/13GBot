@@ -53,6 +53,27 @@ export async function addTrigger(ctx) {
 }
 
 
+export async function delTrigger(ctx) {
+
+  const { from: { id: fromUserId }, match, message } = ctx;
+  const [, command, triggerMatch] = match;
+
+  debug(command, fromUserId, triggerMatch);
+
+  try {
+
+    await triggering.rmTrigger(triggerMatch);
+
+    ctx.replyMD('Удалил');
+
+  } catch (e) {
+    error(command, message.text);
+    ctx.replyError(command, e);
+  }
+
+}
+
+
 export async function trigger(ctx, next) {
 
   const { from: { id: fromUserId }, message: { text } } = ctx;

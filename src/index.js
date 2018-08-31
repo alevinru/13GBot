@@ -35,6 +35,7 @@ Triggers
 bot.command('triggers', triggers.triggerList);
 // bot.command('trigger_add', triggers.addTrigger);
 bot.hears(/^(\/add_trigger) ([^ ]+) (.+)$/, triggers.addTrigger);
+bot.hears(/^(\/del_trigger) ([^ ]+)$/, triggers.delTrigger);
 
 /*
 Other
