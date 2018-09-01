@@ -16,13 +16,14 @@ export default async function (ctx, next) {
     reply,
   } = ctx;
 
+  // debug(JSON.stringify(message));
+
   if (chatId !== userId) {
     debug('ignore:', `@${username} ${firstName}`, text);
     return;
   }
 
   debug('from:', userId, forwardFrom || '(not a forward)', text);
-  // debug(JSON.stringify(message));
   reply(PHRASE_NOT_IMPLEMENTED);
 
 }
