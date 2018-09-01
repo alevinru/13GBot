@@ -23,8 +23,10 @@ function adminFilter(ctx) {
 
 async function notAuthorized(ctx) {
 
+  const { from: { first_name: firstName } } = ctx;
+
   try {
-    ctx.replyPlain('У вас нет прав выполнять эту операцию');
+    ctx.replyPlain(`${firstName}, у вас нет прав выполнять эту операцию`);
   } catch (e) {
     error(e.name, e.message);
   }

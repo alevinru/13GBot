@@ -1,6 +1,8 @@
-// import map from 'lodash/fp/map';
-
+import find from 'lodash/find';
 import * as redis from './redis';
+import log from './log';
+
+const { debug } = log('mw:triggering');
 
 const TRIGGERS_HASH = 'triggers';
 
@@ -14,7 +16,11 @@ export async function addTrigger(match, replyText) {
 
 export async function getTrigger(match) {
 
-  const key = triggerKey(match);
+  const matchKey = Array.isArray(match) ? JSON.stringify(match) : match;
+
+  debug('getTrigger', matchKey);
+
+  const key = triggerKey(matchKey);
 
   return redis.hgetAsync(TRIGGERS_HASH, key);
 
@@ -22,20 +28,39 @@ export async function getTrigger(match) {
 
 export async function rmTrigger(match) {
 
-  const quoted = /[ ]/.test(match) ? `"${match}"` : match;
+  const trigger = await getMatchingTrigger(match);
 
-  const key = triggerKey(quoted);
+  if (!trigger) {
+    return null;
+  }
+
+  const matchKey = JSON.stringify(trigger);
+
+  const key = triggerKey(matchKey);
 
   return redis.hdelAsync(TRIGGERS_HASH, key);
 
 }
 
+export async function getMatchingTrigger(match) {
+  const triggers = await getTriggerList();
+  return find(triggers, matchesTrigger(match));
+}
+
 export async function getTriggerList() {
 
   return redis.hgetallAsync(TRIGGERS_HASH)
-    .then(res => Object.keys(res));
+    .then(res => (res ? Object.keys(res).map(keys => JSON.parse(keys)) : []));
 
 }
+
+export function matchesTrigger(text) {
+  return matches => find(matches, trigger => {
+    const re = new RegExp(trigger, 'i');
+    return re.test(text);
+  });
+}
+
 
 function triggerKey(match) {
   return match.toString();

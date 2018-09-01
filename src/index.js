@@ -36,14 +36,14 @@ Triggers
 
 bot.command('triggers', triggers.triggerList);
 // bot.command('trigger_add', triggers.addTrigger);
-bot.hears(/^(\/add_trigger) (".+"|[^ ]+)[ ]?(.*)$/, adminOnly(triggers.addTrigger));
-bot.hears(/^(\/del_trigger)[ ]?(".+"|[^ ]*)$/, adminOnly(triggers.delTrigger));
+bot.hears(/^(\/add[ _]trigger) (.+)$/, adminOnly(triggers.addTrigger));
+bot.hears(/^(\/del[ _]trigger)[ ]?(.*)$/, adminOnly(triggers.delTrigger));
 
 /*
 Other
  */
 
-bot.on('message', triggers.trigger, etc);
+bot.on('message', triggers.executeTrigger, etc);
 
 bot.startPolling();
 debug('Start polling');

@@ -1,5 +1,6 @@
-import escapeRegExp from 'lodash/escapeRegExp';
 import find from 'lodash/find';
+import trim from 'lodash/trim';
+import orderBy from 'lodash/orderBy';
 
 import * as triggering from '../services/triggering';
 import log from '../services/log';
@@ -15,9 +16,10 @@ export async function triggerList(ctx) {
   try {
 
     const triggers = await triggering.getTriggerList();
+    const replies = triggers.map(trigger => trigger.join(', '));
 
     if (triggers.length) {
-      ctx.replyMD(triggers.join('\n'));
+      ctx.replyHTML(orderBy(replies).join('\n'));
     } else {
       ctx.replyMD('Список триггеров пуст');
     }
@@ -35,15 +37,29 @@ export async function addTrigger(ctx) {
   const { reply_to_message: replyTo } = message;
   // const re = new RegExp(escapeRegExp()`/${command}([^ ]+) (.+)`);
   const [, command, triggerMatch, replyTextInline] = match;
+
   const replyText = replyTextInline || replyTo && replyTo.text;
 
-  debug(command, fromUserId, triggerMatch, replyText);
+  debug(command, fromUserId, triggerMatch, replyText || 'empty');
+  debug('message', message);
 
   try {
 
-    await triggering.addTrigger(triggerMatch, replyText);
+    if (!replyText) {
+      await ctx.replyHTML('Я такое не умею триггерить, только текст обычный пока');
+      return;
+    }
 
-    ctx.replyHTML(`Добавил триггер <b>${triggerMatch}</b>`);
+    const multi = triggerMatch.match(/^\[(.+)]$/);
+
+    const matches = multi ? multi[1].split(',').map(trim) : [triggerMatch];
+
+    const trigger = JSON.stringify(matches);
+    debug(command, multi, trigger);
+
+    await triggering.addTrigger(trigger, replyText);
+
+    await ctx.replyHTML(`Добавил триггер <b>${triggerMatch}</b>`);
 
   } catch (e) {
     error(command, message.text);
@@ -59,9 +75,9 @@ export async function delTrigger(ctx, next) {
   const { reply_to_message: replyTo = {} } = message;
   const [, command, triggerMatchInline] = match;
 
-  debug(command, triggerMatchInline || 'no match', replyTo);
-
   const triggerMatch = triggerMatchInline || replyTo.text;
+
+  debug(command, triggerMatch || 'no match', replyTo.text);
 
   if (!triggerMatch) {
     await next();
@@ -86,9 +102,9 @@ export async function delTrigger(ctx, next) {
 }
 
 
-export async function trigger(ctx, next) {
+export async function executeTrigger(ctx, next) {
 
-  const { from: { id: fromUserId }, message: { text } } = ctx;
+  const { message: { text } } = ctx;
 
   if (!text) {
     return;
@@ -98,8 +114,8 @@ export async function trigger(ctx, next) {
 
     const triggers = await triggering.getTriggerList();
 
-    const re = new RegExp(escapeRegExp(text), 'i');
-    const triggerKey = find(triggers, t => re.test(t));
+    // TODO: a service to cache regexps in memory and watch for redis changes
+    const triggerKey = find(triggers, triggering.matchesTrigger(text));
 
     if (!triggerKey) {
       await next();
@@ -107,11 +123,11 @@ export async function trigger(ctx, next) {
     }
 
     const reply = await triggering.getTrigger(triggerKey);
-    debug('trigger', fromUserId, triggerKey, reply);
+    debug('executeTrigger', triggerKey, reply);
 
-    const finalReply = reply.replace(/\|/g, '\n');
+    // const finalReply = reply.replace(/\|/g, '\n');
 
-    ctx.reply(finalReply);
+    await ctx.reply(reply);
 
   } catch (e) {
     error(text, e.name, e.message);
