@@ -36,8 +36,8 @@ Triggers
 
 bot.command('triggers', triggers.triggerList);
 // bot.command('trigger_add', triggers.addTrigger);
-bot.hears(/^(\/add_trigger) (".+"|[^ ]+) (.+)$/, adminOnly(triggers.addTrigger));
-bot.hears(/^(\/del_trigger) ([^ ]+)$/, adminOnly(triggers.delTrigger));
+bot.hears(/^(\/add_trigger) (".+"|[^ ]+)[ ]?(.*)$/, adminOnly(triggers.addTrigger));
+bot.hears(/^(\/del_trigger)[ ]?(".+"|[^ ]*)$/, adminOnly(triggers.delTrigger));
 
 /*
 Other

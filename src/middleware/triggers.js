@@ -32,8 +32,10 @@ export async function triggerList(ctx) {
 export async function addTrigger(ctx) {
 
   const { from: { id: fromUserId }, match, message } = ctx;
+  const { reply_to_message: replyTo } = message;
   // const re = new RegExp(escapeRegExp()`/${command}([^ ]+) (.+)`);
-  const [, command, triggerMatch, replyText] = match;
+  const [, command, triggerMatch, replyTextInline] = match;
+  const replyText = replyTextInline || replyTo && replyTo.text;
 
   debug(command, fromUserId, triggerMatch, replyText);
 
@@ -51,18 +53,30 @@ export async function addTrigger(ctx) {
 }
 
 
-export async function delTrigger(ctx) {
+export async function delTrigger(ctx, next) {
 
-  const { from: { id: fromUserId }, match, message } = ctx;
-  const [, command, triggerMatch] = match;
+  const { match, message } = ctx;
+  const { reply_to_message: replyTo = {} } = message;
+  const [, command, triggerMatchInline] = match;
 
-  debug(command, fromUserId, triggerMatch);
+  debug(command, triggerMatchInline || 'no match', replyTo);
+
+  const triggerMatch = triggerMatchInline || replyTo.text;
+
+  if (!triggerMatch) {
+    await next();
+    return;
+  }
 
   try {
 
-    await triggering.rmTrigger(triggerMatch);
+    const res = await triggering.rmTrigger(triggerMatch);
 
-    ctx.replyHTML(`Удалил триггер <b>${triggerMatch}</b>`);
+    if (res) {
+      ctx.replyHTML(`Удалил триггер <b>${triggerMatch}</b>`);
+    } else {
+      ctx.replyHTML(`Не нашел триггера <b>${triggerMatch}</b> и ничего не удалил`);
+    }
 
   } catch (e) {
     error(command, message.text);

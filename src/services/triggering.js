@@ -22,7 +22,9 @@ export async function getTrigger(match) {
 
 export async function rmTrigger(match) {
 
-  const key = triggerKey(match);
+  const quoted = /[ ]/.test(match) ? `"${match}"` : match;
+
+  const key = triggerKey(quoted);
 
   return redis.hdelAsync(TRIGGERS_HASH, key);
 
