@@ -56,7 +56,7 @@ export async function getTriggerList() {
 
 export function matchesTrigger(text) {
   return matches => find(matches, trigger => {
-    const re = new RegExp(trigger, 'i');
+    const re = new RegExp(`^${trigger}$`, 'i');
     return re.test(text);
   });
 }
