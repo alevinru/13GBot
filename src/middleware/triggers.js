@@ -145,7 +145,7 @@ export async function commandAt(ctx, next) {
 
   if (cmd) {
     message.text = cmd;
-    return executeTrigger(ctx);
+    return executeTrigger(ctx, next);
   }
 
   return next();
