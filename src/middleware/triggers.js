@@ -134,3 +134,20 @@ export async function executeTrigger(ctx, next) {
   }
 
 }
+
+export async function commandAt(ctx, next) {
+
+  const { match, message } = ctx;
+
+  const [, cmd] = match;
+
+  debug('commandAt', match, cmd);
+
+  if (cmd) {
+    message.text = cmd;
+    return executeTrigger(ctx);
+  }
+
+  return next();
+
+}

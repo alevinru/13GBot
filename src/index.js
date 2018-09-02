@@ -1,7 +1,7 @@
 // import Telegraf from 'telegraf';
 import log from './services/log';
 import session from './services/session';
-import bot, { BOT_ID } from './services/bot';
+import bot, { BOT_ID, BOT_USER_NAME } from './services/bot';
 
 import start from './middleware/start';
 import { adminOnly, grant } from './middleware/auth';
@@ -43,6 +43,9 @@ bot.hears(/^(\/del[ _]trigger)[ ]?(.*)$/, adminOnly(triggers.delTrigger));
 Other
  */
 
+const commandAtRe = new RegExp(`^(\\/[a-z0-9_]+)@${BOT_USER_NAME}$`);
+
+bot.hears(commandAtRe, triggers.commandAt);
 bot.on('message', triggers.executeTrigger, etc);
 
 bot.startPolling();
