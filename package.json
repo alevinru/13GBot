@@ -36,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/alevinru/13GBot/issues"
   },
-  "homepage": "https://github.com/alevinru/13GBot#readme"
+  "homepage": "https://github.com/alevinru/13GBot#readme",
+  "engines": {
+    "node": "8.11.3"
+  }
 }
