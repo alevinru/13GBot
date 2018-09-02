@@ -8,6 +8,7 @@ import { adminOnly, grant } from './middleware/auth';
 import { hello } from './middleware/hello';
 import etc from './middleware/message';
 import * as triggers from './middleware/triggers';
+import * as guild from './middleware/guild';
 
 const { debug, error } = log('index');
 
@@ -27,8 +28,14 @@ Users
 bot.command('start', start);
 // bot.command('auth', auth);
 bot.command('hello', hello);
-// bot.command('users', users.listUsers);
+bot.hears(/\/grant[ _]stockmaster[ ]?(\d*)/, adminOnly(guild.grantStockMaster));
 bot.hears(/\/grant ([^ ]+) (\d+)/, adminOnly(grant));
+
+/*
+Guild
+ */
+
+bot.hears(/\/request[ _]([a-z0-9]+)[ _]([0-9]+)/, guild.requestWithdraw);
 
 /*
 Triggers
