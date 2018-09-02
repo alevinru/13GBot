@@ -26,18 +26,35 @@ export async function requestWithdraw(ctx) {
     // Reply to author
     const request = await guild.addStockRequest(from.id, itemCode, qty);
 
-    await ctx.replyHTML(`Отправил завхозу запрос №<code>${request.id}</code>`);
+    await notifyStockMaster(ctx, master, request, from);
 
-    // Notify stock master
-    const fromText = `@${from.username} <b>${from.first_name} ${from.last_name}</b> просит:`;
+    await ctx.replyHTML(`Отправил завхозу запрос №<code>${request.id}</code>, теперь жди!`);
 
-    const withdraw = `/g_withdraw ${itemCode} ${qty}`;
+  } catch (e) {
+    error(e.name, e.message);
+  }
+
+}
+
+
+async function notifyStockMaster(ctx, master, request, from) {
+
+  const { itemCode, qty } = request;
+  const { username, first_name: firstName, last_name: lastName } = from;
+
+  const fromText = `@${username} <b>${firstName} ${lastName}</b> просит:`;
+
+  const withdraw = `/g_withdraw ${itemCode} ${qty}`;
+
+
+  try {
 
     await bot.telegram.sendMessage(master, fromText, { parse_mode: 'HTML' });
     await bot.telegram.sendMessage(master, withdraw);
 
   } catch (e) {
-    error(e.name, e.message);
+    ctx.replyError('отправить завхозу сообщение', e);
+    throw e;
   }
 
 }
@@ -62,7 +79,10 @@ export async function grantStockMaster(ctx) {
     }
 
     await guild.setStockMaster(userId);
-    await ctx.replyHTML(`Назначил завхозом юзера <code>${userId}</code> @${replyTo.from.username}`);
+    await ctx.replyHTML([
+      `Назначил завхозом юзера <code>${userId}</code>`,
+      replyTo ? ` @${replyTo.from.username}` : '',
+    ]);
 
   } catch (e) {
     ctx.replyError(command, e);

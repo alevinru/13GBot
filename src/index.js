@@ -29,7 +29,7 @@ bot.command('start', start);
 // bot.command('auth', auth);
 bot.command('hello', hello);
 bot.hears(/\/grant[ _]stockmaster[ ]?(\d*)/, adminOnly(guild.grantStockMaster));
-bot.hears(/\/grant ([^ ]+) (\d+)/, adminOnly(grant));
+bot.hears(/\/grant ([^ ]+)[ ]?(\d*)/, adminOnly(grant));
 
 /*
 Guild

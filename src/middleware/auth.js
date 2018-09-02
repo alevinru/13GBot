@@ -36,7 +36,10 @@ async function notAuthorized(ctx) {
 export async function grant(ctx) {
 
   const { match, session, from: { id: authorId } } = ctx;
-  const [, role, userId] = match;
+  const { reply_to_message: replyTo } = ctx.message;
+  const [, role, inlineUserId] = match;
+
+  const userId = replyTo ? replyTo.from.id : inlineUserId;
 
   try {
 
