@@ -5,6 +5,7 @@
     "REDIS_DB": 2,
     "BOT_USER_NAME": "The13GBot",
     "DEBUG_NAMESPACE": "laa:tgb",
-    "ERROR_NAMESPACE": "laa:tgb:error"
+    "ERROR_NAMESPACE": "laa:tgb:error",
+    "CW_BOT_ID": 265204902
   }
 }

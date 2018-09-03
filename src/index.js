@@ -1,4 +1,4 @@
-// import Telegraf from 'telegraf';
+import Telegraf from 'telegraf';
 import bot, { BOT_ID, BOT_USER_NAME } from 'sistemium-telegram/services/bot';
 import log from 'sistemium-telegram/services/log';
 import session from 'sistemium-telegram/services/session';
@@ -11,6 +11,9 @@ import { hello } from './middleware/hello';
 import etc from './middleware/message';
 import * as triggers from './middleware/triggers';
 import * as guild from './middleware/guild';
+import hero from './middleware/hero';
+
+import { fromCWFilter } from './etc/filters';
 
 const { debug, error } = log('index');
 
@@ -47,6 +50,13 @@ bot.command('triggers', triggers.triggerList);
 // bot.command('trigger_add', triggers.addTrigger);
 bot.hears(/^(\/add[ _]trigger) (.+)$/, adminOnly(triggers.addTrigger));
 bot.hears(/^(\/del[ _]trigger)[ ]?(.*)$/, adminOnly(triggers.delTrigger));
+
+
+/*
+ChatWars
+*/
+
+bot.on('message', Telegraf.optional(fromCWFilter, hero));
 
 /*
 Other
