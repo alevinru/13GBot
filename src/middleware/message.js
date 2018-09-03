@@ -1,4 +1,4 @@
-import log from '../services/log';
+import log from 'sistemium-telegram/services/log';
 
 const { PHRASE_NOT_IMPLEMENTED } = process.env || 'What ?';
 
