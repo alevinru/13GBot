@@ -1,4 +1,4 @@
-import * as redis from './redis';
+import * as redis from 'sistemium-telegram/services/redis';
 
 const REQUESTS_KEY = 'guild_stock_requests';
 

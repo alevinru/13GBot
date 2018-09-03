@@ -1,7 +1,9 @@
 // import Telegraf from 'telegraf';
-import log from './services/log';
-import session from './services/session';
-import bot, { BOT_ID, BOT_USER_NAME } from './services/bot';
+import bot, { BOT_ID, BOT_USER_NAME } from 'sistemium-telegram/services/bot';
+import log from 'sistemium-telegram/services/log';
+import session from 'sistemium-telegram/services/session';
+
+import contextConfig from 'sistemium-telegram/config/context';
 
 import start from './middleware/start';
 import { adminOnly, grant } from './middleware/auth';
@@ -12,7 +14,7 @@ import * as guild from './middleware/guild';
 
 const { debug, error } = log('index');
 
-require('./config/context').default(bot);
+contextConfig(bot);
 
 /*
 Low level middleware

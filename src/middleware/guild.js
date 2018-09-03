@@ -1,6 +1,6 @@
-import bot from '../services/bot';
+import bot from 'sistemium-telegram/services/bot';
+import log from 'sistemium-telegram/services/log';
 import * as guild from '../services/guildManagement';
-import log from '../services/log';
 
 const { debug, error } = log('mw:guild');
 

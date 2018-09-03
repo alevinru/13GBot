@@ -1,9 +1,9 @@
 import find from 'lodash/find';
 import trim from 'lodash/trim';
 import orderBy from 'lodash/orderBy';
+import log from 'sistemium-telegram/services/log';
 
 import * as triggering from '../services/triggering';
-import log from '../services/log';
 
 const { debug, error } = log('mw:triggers');
 

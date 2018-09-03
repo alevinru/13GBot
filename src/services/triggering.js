@@ -1,6 +1,6 @@
 import find from 'lodash/find';
-import * as redis from './redis';
-import log from './log';
+import * as redis from 'sistemium-telegram/services/redis';
+import log from 'sistemium-telegram/services/log';
 
 const { debug } = log('mw:triggering');
 

@@ -3,6 +3,8 @@
     "DEBUG": "laa:*",
     "PHRASE_NOT_IMPLEMENTED": "I don't understand this kind of messages",
     "REDIS_DB": 2,
-    "BOT_USER_NAME": "The13GBot"
+    "BOT_USER_NAME": "The13GBot",
+    "DEBUG_NAMESPACE": "laa:tgb",
+    "ERROR_NAMESPACE": "laa:tgb:error"
   }
 }

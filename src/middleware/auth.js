@@ -1,7 +1,7 @@
 import Telegraf from 'telegraf';
-import log from '../services/log';
-import { getSession, setSession } from '../services/session';
-import { BOT_ID } from '../services/bot';
+import log from 'sistemium-telegram/services/log';
+import { getSession, setSession } from 'sistemium-telegram/services/session';
+import { BOT_ID } from 'sistemium-telegram/services/bot';
 
 const { debug, error } = log('mw:auth');
 

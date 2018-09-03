@@ -1,4 +1,4 @@
-import log from '../services/log';
+import log from 'sistemium-telegram/services/log';
 import { hello } from './hello';
 
 const { debug } = log('mw:start');
