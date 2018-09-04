@@ -15,6 +15,11 @@ export async function parseHero(ctx, next) {
   const userId = from.id;
   const ts = new Date(date * 1000);
 
+  if (!text) {
+    await next();
+    return;
+  }
+
   const items = text.split('\n');
 
   const equipStart = findIndex(items, item => equipRe.test(item));
@@ -48,15 +53,35 @@ export async function parseHero(ctx, next) {
       return;
     }
 
-    await eq.saveEquip(userId, equip);
+    const userInfo = items[0];
+    const matchUser = userInfo.match(/^([🐢🌹☘️🍁🍆🖤🦇]+)(\[.+])(.+)$/);
+
+    if (!matchUser) {
+      await ctx.reply('Я не смог понять кто ты, извини');
+      return;
+    }
+
+    const [, castle, guildTag, gameName] = matchUser;
 
     const response = [
-      'Я так понял вот шмот:',
+      'Я так понял вот твой шмот:',
       '\n\n',
-      equip.map(e => JSON.stringify(e)).join('\n'),
+      equip.map(formatEquipItem).join('\n'),
       '\n\n',
-      'Все запомнил, а форматировать красиво потом научусь как-нибудь',
+      `Все запомнил, спасибо, ${castle} ${guildTag} <b>${gameName}</b>!`,
     ];
+
+    const userData = {
+      userId,
+      castle,
+      guildTag,
+      gameName,
+      name: `${from.first_name} ${from.last_name}`,
+      userName: from.username,
+    };
+
+    await eq.saveEquip(userId, equip);
+    await eq.saveUser(userId, userData);
 
     ctx.replyHTML(response);
 
@@ -71,25 +96,43 @@ export async function getAllEquip(ctx) {
 
   try {
 
-    const data = await eq.getAllEquip();
-    const res = data.map(formatEquip(';')).join('\n\n');
+    const equipData = await eq.getAllEquip();
+    const users = await eq.getUsers();
+
+    const userData = equipData.map(({ userId, data }) => {
+      const { gameName = 'Этого перса не знаю' } = users[userId] || {};
+      return {
+        userId,
+        data,
+        name: gameName,
+      };
+    });
+
+    const res = userData.map(formatEquip(';')).join('\n');
 
     ctx.replyHTML(res);
 
   } catch (e) {
-    error(e.message);
+    error(e);
   }
 
 }
 
 function formatEquip(delimiter = '\n') {
 
-  return ({ userId, data }) => [
+  return ({ userId, data, name }) => [
     `<code>${userId}</code>`,
-    data.map(item => [
-      `${item.name}`,
-      item.enchanted ? ` +${item.enchanted}` : '',
-    ].join('')).join(delimiter),
+    `<b>${name}</b>`,
+    data.map(formatEquipItem).join(delimiter),
   ].join(delimiter);
+
+}
+
+function formatEquipItem(item) {
+
+  return [
+    `${item.name}`,
+    item.enchanted ? ` +${item.enchanted}` : '',
+  ].join('');
 
 }
