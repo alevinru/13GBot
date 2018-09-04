@@ -76,7 +76,7 @@ export async function parseHero(ctx, next) {
       castle,
       guildTag,
       gameName,
-      name: `${from.first_name} ${from.last_name}`,
+      name: `${filter([from.first_name, from.last_name]).join(' ')}`,
       userName: from.username,
     };
 
@@ -100,11 +100,13 @@ export async function getAllEquip(ctx) {
     const users = await eq.getUsers();
 
     const userData = equipData.map(({ userId, data }) => {
-      const { gameName = 'Этого перса не знаю' } = users[userId] || {};
+      const { gameName = 'Этого перса не знаю', name, userName } = users[userId] || {};
       return {
         userId,
         data,
-        name: gameName,
+        gameName,
+        name,
+        userName,
       };
     });
 
@@ -120,11 +122,20 @@ export async function getAllEquip(ctx) {
 
 function formatEquip(delimiter = '\n') {
 
-  return ({ userId, data, name }) => [
-    `<code>${userId}</code>`,
-    `<b>${name}</b>`,
-    data.map(formatEquipItem).join(delimiter),
-  ].join(delimiter);
+  return equipData => {
+
+    const {
+      userId, data, name, userName, gameName,
+    } = equipData;
+
+    return [
+      `<code>${userId}</code>`,
+      name ? `<b>${name}</b>` : '',
+      userName ? `${userName}` : '',
+      `<b>${gameName}</b>`,
+      data.map(formatEquipItem).join(delimiter),
+    ].join(delimiter);
+  };
 
 }
 
