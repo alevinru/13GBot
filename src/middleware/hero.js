@@ -1,14 +1,14 @@
 import log from 'sistemium-telegram/services/log';
 import findIndex from 'lodash/findIndex';
 import filter from 'lodash/filter';
-// import trim from 'lodash/trim';
+import * as eq from '../services/equip';
 
 const { debug, error } = log('mw:hero');
 
 const equipRe = /^🎽Экипировка/;
 const itemRe = /⚔|🛡/;
 
-export default async function (ctx, next) {
+export async function parseHero(ctx, next) {
 
   const { message: { from, text, forward_date: date } } = ctx;
 
@@ -21,7 +21,7 @@ export default async function (ctx, next) {
 
   debug(userId, equipStart, ts);
 
-  if (!equipStart) {
+  if (equipStart < 0) {
     await next();
     return;
   }
@@ -35,20 +35,27 @@ export default async function (ctx, next) {
     equip = equip.map(item => {
       const match = item.match(/^(⚡\+\d+)?[ ]?([^⚔🛡]+)[ ](\+\d+⚔)?[ ]?(\+\d+🛡)?/);
       const [, enchanted, name, atk, def] = match;
-      return JSON.stringify({
+      return {
         name,
         enchanted: enchanted && enchanted.replace(/[^0-9]/g, ''),
         atk: atk && atk.replace(/[⚔+]/g, ''),
         def: def && def.replace(/[🛡+]/g, ''),
-      });
+      };
     });
+
+    if (!equip.length) {
+      await ctx.replyPlain('Это не похоже на форвард /hero, ты, наверное, профиль прислал или прикалываешься');
+      return;
+    }
+
+    await eq.saveEquip(userId, equip);
 
     const response = [
       'Я так понял вот шмот:',
       '\n\n',
-      equip.join('\n'),
+      equip.map(e => JSON.stringify(e)).join('\n'),
       '\n\n',
-      'Но я ничего не запоминаю из этого пока, так что потом пришли снова как-нибудь!',
+      'Все запомнил, а форматировать красиво потом научусь как-нибудь',
     ];
 
     ctx.replyHTML(response);
@@ -56,5 +63,33 @@ export default async function (ctx, next) {
   } catch (e) {
     error(e.message);
   }
+
+}
+
+
+export async function getAllEquip(ctx) {
+
+  try {
+
+    const data = await eq.getAllEquip();
+    const res = data.map(formatEquip(';')).join('\n\n');
+
+    ctx.replyHTML(res);
+
+  } catch (e) {
+    error(e.message);
+  }
+
+}
+
+function formatEquip(delimiter = '\n') {
+
+  return ({ userId, data }) => [
+    `<code>${userId}</code>`,
+    data.map(item => [
+      `${item.name}`,
+      item.enchanted ? ` +${item.enchanted}` : '',
+    ].join('')).join(delimiter),
+  ].join(delimiter);
 
 }

@@ -11,7 +11,7 @@ import { hello } from './middleware/hello';
 import etc from './middleware/message';
 import * as triggers from './middleware/triggers';
 import * as guild from './middleware/guild';
-import hero from './middleware/hero';
+import * as hero from './middleware/hero';
 
 import { fromCWFilter } from './etc/filters';
 
@@ -56,7 +56,8 @@ bot.hears(/^(\/del[ _]trigger)[ ]?(.*)$/, adminOnly(triggers.delTrigger));
 ChatWars
 */
 
-bot.on('message', Telegraf.optional(fromCWFilter, hero));
+bot.on('message', Telegraf.optional(fromCWFilter, hero.parseHero));
+bot.command('equip', hero.getAllEquip);
 
 /*
 Other
