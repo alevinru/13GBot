@@ -15,6 +15,8 @@ import * as hero from './middleware/hero';
 
 import { fromCWFilter } from './etc/filters';
 
+// const  = require('sistemium-telegram/services/bot').default;
+
 const { debug, error } = log('index');
 
 contextConfig(bot);
@@ -33,14 +35,14 @@ Users
 bot.command('start', start);
 // bot.command('auth', auth);
 bot.command('hello', hello);
-bot.hears(/\/grant[ _]stockmaster[ ]?(\d*)/, adminOnly(guild.grantStockMaster));
-bot.hears(/\/grant ([^ ]+)[ ]?(\d*)/, adminOnly(grant));
+bot.hears(/^\/grant[ _]stockmaster[ ]?(\d*)$/, adminOnly(guild.grantStockMaster));
+bot.hears(/^\/grant ([^ ]+)[ ]?(\d*)$/, adminOnly(grant));
 
 /*
 Guild
  */
 
-bot.hears(/\/request[ _]([a-z0-9]+)[ _]([0-9]+)/, guild.requestWithdraw);
+bot.hears(/^\/request[ _]([a-z0-9]+)[ _]([0-9]+)$/, guild.requestWithdraw);
 
 /*
 Triggers
@@ -48,8 +50,8 @@ Triggers
 
 bot.command('triggers', triggers.triggerList);
 // bot.command('trigger_add', triggers.addTrigger);
-bot.hears(/^(\/add[ _]trigger) (.+)$/, adminOnly(triggers.addTrigger));
-bot.hears(/^(\/del[ _]trigger)[ ]?(.*)$/, adminOnly(triggers.delTrigger));
+bot.hears(/^(\/add[ _]trigger) (.+)$/i, adminOnly(triggers.addTrigger));
+bot.hears(/^(\/del[ _]trigger)[ ]?(.*)$/i, adminOnly(triggers.delTrigger));
 
 
 /*
@@ -63,7 +65,7 @@ bot.command('equip', hero.getAllEquip);
 Other
  */
 
-const commandAtRe = new RegExp(`^(\\/[a-z0-9_]+)@${BOT_USER_NAME}$`);
+const commandAtRe = new RegExp(`^(\\/[a-z0-9_]+)@${BOT_USER_NAME}$`, 'i');
 
 bot.hears(commandAtRe, triggers.commandAt);
 bot.on('message', triggers.executeTrigger, etc);
