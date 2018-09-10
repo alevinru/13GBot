@@ -20,12 +20,10 @@
   "dependencies": {
     "debug": "^3.1.0",
     "lodash": "^4.17.10",
-    "redis": "^2.8.0",
-    "sistemium-telegram": "^1.0.1",
-    "telegraf": "^3.22.2",
-    "telegraf-session-redis": "^5.0.0"
+    "sistemium-telegram": "^1.0.1"
   },
   "devDependencies": {
+    "telegraf": "^3.22.2",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
