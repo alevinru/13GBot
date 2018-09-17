@@ -21,7 +21,7 @@ commands(bot, BOT_USER_NAME);
 
 bot.startPolling();
 
-debug('Start polling bot id:', BOT_ID, 'as "BOT_USER_NAME"');
+debug('Start polling bot id:', BOT_ID, `as "${BOT_USER_NAME}"`);
 
 /*
 Exception handlers

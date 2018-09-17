@@ -67,8 +67,6 @@ export async function parseHero(ctx, next) {
     const levelData = find(items, item => levelRe.test(item));
     const level = parseInt(levelData.match(levelRe)[1], 0);
 
-    debug(levelData);
-
     const response = [
       `Я так понял у тебя уровень <b>${level}</b> и вот такой шмот:`,
       '\n\n',
