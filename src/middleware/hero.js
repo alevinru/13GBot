@@ -1,5 +1,6 @@
 import log from 'sistemium-telegram/services/log';
 import findIndex from 'lodash/findIndex';
+import find from 'lodash/find';
 import filter from 'lodash/filter';
 import * as eq from '../services/equip';
 
@@ -7,6 +8,7 @@ const { debug, error } = log('mw:hero');
 
 const equipRe = /^🎽Экипировка/;
 const itemRe = /⚔|🛡/;
+const levelRe = /^🏅Уровень: (\d+)$/;
 
 export async function parseHero(ctx, next) {
 
@@ -62,9 +64,13 @@ export async function parseHero(ctx, next) {
     }
 
     const [, castle, guildTag, gameName] = matchUser;
+    const levelData = find(items, item => levelRe.test(item));
+    const level = parseInt(levelData.match(levelRe)[1], 0);
+
+    debug(levelData);
 
     const response = [
-      'Я так понял вот твой шмот:',
+      `Я так понял у тебя уровень <b>${level}</b> и вот такой шмот:`,
       '\n\n',
       equip.map(formatEquipItem).join('\n'),
       '\n\n',
@@ -73,6 +79,7 @@ export async function parseHero(ctx, next) {
 
     const userData = {
       userId,
+      level,
       castle,
       guildTag,
       gameName,
@@ -100,13 +107,19 @@ export async function getAllEquip(ctx) {
     const users = await eq.getUsers();
 
     const userData = equipData.map(({ userId, data }) => {
-      const { gameName = 'Этого перса не знаю', name, userName } = users[userId] || {};
+      const {
+        gameName = 'Этого перса не знаю',
+        name,
+        userName,
+        level,
+      } = users[userId] || {};
       return {
         userId,
         data,
         gameName,
         name,
         userName,
+        level,
       };
     });
 
@@ -125,7 +138,7 @@ function formatEquip(delimiter = '\n') {
   return equipData => {
 
     const {
-      userId, data, name, userName, gameName,
+      userId, data, name, userName, gameName, level,
     } = equipData;
 
     return [
@@ -133,6 +146,7 @@ function formatEquip(delimiter = '\n') {
       name ? `<b>${name}</b>` : '',
       userName ? `${userName}` : '',
       `<b>${gameName}</b>`,
+      level || '⚠️<b>не знаю какой у него уровень</b>',
       data.map(formatEquipItem).join(delimiter),
     ].join(delimiter);
   };
