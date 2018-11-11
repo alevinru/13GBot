@@ -52,6 +52,6 @@ export default function (bot, BOT_USER_NAME) {
   const commandAtRe = new RegExp(`^(\\/[a-z0-9_]+)@${BOT_USER_NAME}$`, 'i');
 
   bot.hears(commandAtRe, triggers.commandAt);
-  bot.on('message', etc);
+  bot.on('message', triggers.executeTrigger, etc);
 
 }
