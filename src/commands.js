@@ -8,7 +8,7 @@ import * as triggers from './middleware/triggers';
 import * as guild from './middleware/guild';
 import * as hero from './middleware/hero';
 
-import { fromCWFilter } from './etc/filters';
+import * as f from './etc/filters';
 
 export default function (bot, BOT_USER_NAME) {
 
@@ -41,7 +41,7 @@ export default function (bot, BOT_USER_NAME) {
   ChatWars
   */
 
-  bot.on('message', Telegraf.optional(fromCWFilter, hero.parseHero));
+  bot.on('message', Telegraf.optional(ctx => f.fromCWFilter(ctx) && f.heroFilter(ctx), hero.parseHero));
   bot.command('equip', hero.getAllEquip);
 
   /*

@@ -20,3 +20,26 @@ export function fromCWFilter(ctx) {
   return res;
 
 }
+
+const heroRe = /Уровень[\s\S]*Ранг[\s\S]*Класс/;
+
+export function heroFilter(ctx) {
+
+  const { text } = ctx.message;
+  debug('heroFilter', heroRe.test(text));
+  return heroRe.test(text);
+
+}
+
+
+export function levelUpFilter(ctx) {
+
+  const { sticker } = ctx;
+
+  if (!sticker) {
+    return false;
+  }
+
+  return ctx.file_id === 'CAADAgADiQAD6st5AuZbw2Z4SeORAg';
+
+}

@@ -68,7 +68,7 @@ export async function parseHero(ctx, next) {
     const level = parseInt(levelData.match(levelRe)[1], 0);
 
     const response = [
-      `Я так понял у тебя уровень <b>${level}</b> и вот такой шмот:`,
+      `Я так понял, что у тебя уровень <b>${level}</b> и вот такой шмот:`,
       '\n\n',
       equip.map(formatEquipItem).join('\n'),
       '\n\n',
