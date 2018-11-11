@@ -1,6 +1,7 @@
 import log from 'sistemium-telegram/services/log';
 import findIndex from 'lodash/findIndex';
 import find from 'lodash/find';
+import trim from 'lodash/trim';
 import filter from 'lodash/filter';
 import * as eq from '../services/equip';
 
@@ -131,6 +132,17 @@ export async function getAllEquip(ctx) {
 
 }
 
+
+export async function greetLevelup(ctx) {
+
+  const { from } = ctx;
+
+  const reply = `Поздравляю, <b>${fromName(from)}</b>! Не забудь свежее /hero прислать!`;
+
+  await ctx.replyWithHTML(reply);
+
+}
+
 function formatEquip(delimiter = '\n') {
 
   return equipData => {
@@ -158,4 +170,8 @@ function formatEquipItem(item) {
     item.enchanted ? ` +${item.enchanted}` : '',
   ].join('');
 
+}
+
+function fromName({ first_name: firstName, last_name: lastName }) {
+  return trim([firstName, lastName].join(' '));
 }

@@ -16,7 +16,7 @@ export function fromCWFilter(ctx) {
 
   const { forward_from: from } = ctx.message;
   const res = from.id === CW_BOT_ID;
-  debug('fromCWFilter', from, res);
+  debug('fromCWFilter', res);
   return res;
 
 }
@@ -34,12 +34,12 @@ export function heroFilter(ctx) {
 
 export function levelUpFilter(ctx) {
 
-  const { sticker } = ctx;
+  const { message: { sticker } } = ctx;
 
   if (!sticker) {
     return false;
   }
 
-  return ctx.file_id === 'CAADAgADiQAD6st5AuZbw2Z4SeORAg';
+  return sticker.file_id === 'CAADAgADiQAD6st5AuZbw2Z4SeORAg';
 
 }

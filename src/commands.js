@@ -42,6 +42,7 @@ export default function (bot, BOT_USER_NAME) {
   */
 
   bot.on('message', Telegraf.optional(ctx => f.fromCWFilter(ctx) && f.heroFilter(ctx), hero.parseHero));
+  bot.on('message', Telegraf.optional(ctx => f.fromCWFilter(ctx) && f.levelUpFilter(ctx), hero.greetLevelup));
   bot.command('equip', hero.getAllEquip);
 
   /*
@@ -51,6 +52,6 @@ export default function (bot, BOT_USER_NAME) {
   const commandAtRe = new RegExp(`^(\\/[a-z0-9_]+)@${BOT_USER_NAME}$`, 'i');
 
   bot.hears(commandAtRe, triggers.commandAt);
-  bot.on('message', triggers.executeTrigger, etc);
+  bot.on('message', etc);
 
 }

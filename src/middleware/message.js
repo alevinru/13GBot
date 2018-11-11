@@ -9,14 +9,13 @@ export default async function (ctx, next) {
   await next();
 
   const {
-    // message,
     message: { forward_from: forwardFrom, text },
     from: { id: userId, username, first_name: firstName },
     chat: { id: chatId },
     reply,
   } = ctx;
 
-  // debug(JSON.stringify(message));
+  // debug(JSON.stringify(ctx.message));
 
   if (chatId !== userId) {
     debug('ignore:', `@${username} ${firstName}`, text);
