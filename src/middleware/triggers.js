@@ -107,7 +107,7 @@ export async function executeTrigger(ctx, next) {
   const { message: { text } } = ctx;
 
   if (!text) {
-    return;
+    await next();
   }
 
   try {
