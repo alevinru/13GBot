@@ -46,8 +46,8 @@ export default function (bot, BOT_USER_NAME) {
   ChatWars
   */
 
-  bot.on('message', Telegraf.optional(ctx => f.fromCWFilter(ctx) && f.heroFilter(ctx), hero.parseHero));
-  bot.on('message', Telegraf.optional(ctx => f.fromCWFilter(ctx) && f.levelUpFilter(ctx), hero.greetLevelup));
+  bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.heroFilter), hero.parseHero));
+  bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.levelUpFilter), hero.greetLevelup));
   bot.command('equip', hero.getAllEquip);
 
   /*

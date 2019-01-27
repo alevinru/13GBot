@@ -21,6 +21,12 @@ export function fromCWFilter(ctx) {
 
 }
 
+export function fromCWFilterIf(filter) {
+
+  return ctx => fromCWFilter(ctx) && filter(ctx);
+
+}
+
 const heroRe = /Уровень[\s\S]*Ранг[\s\S]*Класс/;
 
 export function heroFilter(ctx) {
