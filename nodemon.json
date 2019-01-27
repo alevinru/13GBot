@@ -2,8 +2,9 @@
   "env": {
     "DEBUG": "laa:*",
     "PHRASE_NOT_IMPLEMENTED": "I don't understand this kind of messages",
+    "PHRASE_ON_START": "Hi there, bro!",
     "REDIS_DB": 2,
-    "BOT_USER_NAME": "The13GBot",
+    "BOT_USER_NAME": "cw3GuildHelperBot",
     "DEBUG_NAMESPACE": "laa:tgb",
     "ERROR_NAMESPACE": "laa:tgb:error",
     "CW_BOT_ID": 265204902

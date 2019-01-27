@@ -3,6 +3,8 @@ import { hello } from './hello';
 
 const { debug, error } = log('mw:start');
 
+const { PHRASE_ON_START } = process.env;
+
 export default async function (ctx) {
 
   const { reply, from: { id: userId }, session } = ctx;
@@ -12,7 +14,7 @@ export default async function (ctx) {
     if (session.auth) {
       await hello(ctx);
     } else {
-      await reply('Бот 13го Галеона приветствует тебя!');
+      await reply(PHRASE_ON_START);
     }
   } catch (e) {
     error(e);

@@ -6,8 +6,7 @@
   "scripts": {
     "lint": "eslint src",
     "test": "npm run lint",
-    "babel-node": "babel-node",
-    "start": "nodemon --exec 'npm run lint && babel-node' -- src/index.js",
+    "start": "nodemon --exec 'npm run lint && node -r esm' -- src/index.js",
     "pkg": "cp package.json dist",
     "build": "npm run lint && rm -rf dist && babel src -d dist && npm run pkg"
   },
@@ -19,8 +18,9 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^3.1.0",
+    "esm": "^3.1.1",
     "lodash": "^4.17.10",
-    "sistemium-telegram": "^1.0.1"
+    "sistemium-telegram": "^1.2.9"
   },
   "devDependencies": {
     "telegraf": "^3.22.2",
