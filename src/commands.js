@@ -10,6 +10,11 @@ import * as hero from './middleware/hero';
 
 import * as f from './etc/filters';
 
+/**
+ * Commands setup
+ * @param {Telegraf} bot
+ * @param {String} BOT_USER_NAME
+ */
 export default function (bot, BOT_USER_NAME) {
 
   /*
