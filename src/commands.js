@@ -7,6 +7,7 @@ import etc from './middleware/message';
 import * as triggers from './middleware/triggers';
 import * as guild from './middleware/guild';
 import * as hero from './middleware/hero';
+import arena from './middleware/arena';
 
 import * as f from './etc/filters';
 
@@ -49,6 +50,7 @@ export default function (bot, BOT_USER_NAME) {
   bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.heroFilter), hero.parseHero));
   bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.levelUpFilter), hero.greetLevelup));
   bot.command('equip', hero.getAllEquip);
+  bot.hears(/^\/arena[ ](.*)$/, arena);
 
   /*
   Other

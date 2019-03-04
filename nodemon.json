@@ -7,6 +7,7 @@
     "BOT_USER_NAME": "cw3GuildHelperBot",
     "DEBUG_NAMESPACE": "laa:tgb",
     "ERROR_NAMESPACE": "laa:tgb:error",
+    "MONGO_URL": "mng2.sistemium.net:27017/CW",
     "CW_BOT_ID": 265204902
   }
 }
