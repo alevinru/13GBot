@@ -51,7 +51,8 @@ export default function (bot, BOT_USER_NAME) {
   bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.heroFilter), hero.parseHero));
   bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.levelUpFilter), hero.greetLevelup));
   bot.command('equip', hero.getAllEquip);
-  bot.hears(/^\/arena[ ](.*)$/, arena);
+  bot.hears(/^\/arena[ _](.*)[ ](\d+)$/, arena);
+  bot.hears(/^\/arena[ _](.*)$/, arena);
   bot.hears(/^\/sales_([a-z0-9]{1,2}\d+)[ _]?(\d+)?$/, trades.itemStats);
 
   /*

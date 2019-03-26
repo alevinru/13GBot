@@ -18,22 +18,24 @@ export default async function (ctx) {
 
   const { from: { id: fromUserId }, message } = ctx;
   const { match } = ctx;
-  const [, name] = match;
+  const [, name, shiftParam = '0'] = match;
 
-  debug(fromUserId, message.text, match);
+  debug(fromUserId, message.text, name, shiftParam);
+
 
   try {
 
+    const shift = parseInt(shiftParam, 0);
     const [, tag] = name.match(/\[(.+)\]/) || [];
 
     if (tag) {
 
-      const { tf, res: data } = await guildDuels(tag);
+      const { tf, res: data } = await guildDuels(tag, shift);
 
       const reply = [
         `Арены <b>[${tag}]</b> за ${format(tf.ts.$gt, 'dd/MM')}:\n`,
         ...map(data, formatGuildMemberDuels),
-        `\nВсего: <b>${data.length}</b> пероснажей ${formatGuildTotalDuels(data)}`,
+        `\nВсего бойцов: <b>${data.length}</b> побед: ${formatGuildTotalDuels(data)}`,
       ];
 
       await ctx.replyWithHTML(reply.join('\n'));
@@ -71,11 +73,11 @@ function formatGuildMemberDuels(duels) {
 }
 
 
-async function guildDuels(tag) {
+async function guildDuels(tag, shift) {
 
   const cond = { $or: [{ 'winner.tag': tag }, { 'loser.tag': tag }] };
 
-  const tf = duelTimeFilter();
+  const tf = duelTimeFilter(shift);
 
   Object.assign(cond, tf);
 
@@ -116,13 +118,23 @@ async function guildDuels(tag) {
 }
 
 
-function duelTimeFilter() {
-  let today = new Date();
-  today.setHours(DUEL_RESET_HOUR, 0, 0, 0);
-  if (today > new Date()) {
-    today = addDays(today, -1);
+function duelTimeFilter(shift) {
+
+  const today = addDays(new Date(), -shift);
+  let $lt = addDays(new Date(), -shift);
+
+  $lt.setHours(DUEL_RESET_HOUR, 0, 0, 0);
+
+  if ($lt < today) {
+    $lt = addDays($lt, 1);
   }
-  return { ts: { $gt: today } };
+
+  const $gt = addDays($lt, -1);
+
+  debug('duelTimeFilter', shift, $gt, $lt);
+
+  return { ts: { $gt, $lt } };
+
 }
 
 function dateFormat(date) {
