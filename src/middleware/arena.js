@@ -1,12 +1,18 @@
 import map from 'lodash/map';
+import groupBy from 'lodash/groupBy';
+import orderBy from 'lodash/orderBy';
+import maxBy from 'lodash/maxBy';
+import sumBy from 'lodash/sumBy';
 import filter from 'lodash/filter';
 import last from 'lodash/last';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 
 import log from 'sistemium-telegram/services/log';
 import Duel from '../models/Duel';
 
 const { debug, error } = log('mw:arena');
+
+const DUEL_RESET_HOUR = parseInt(process.env.DUEL_RESET_HOUR, 0) || 12;
 
 export default async function (ctx) {
 
@@ -18,13 +24,28 @@ export default async function (ctx) {
 
   try {
 
-    const cond = { $or: [{ 'winner.name': name }, { 'loser.name': name }] };
+    const [, tag] = name.match(/\[(.+)\]/) || [];
 
-    // Object.assign(cond, duelTimeFilter());
+    if (tag) {
 
-    const data = await Duel.find(cond).sort('-ts').limit(5);
+      const { tf, res: data } = await guildDuels(tag);
 
-    await ctx.replyWithHTML(formatDuels(data, name));
+      const reply = [
+        `Арены <b>[${tag}]</b> за ${format(tf.ts.$gt, 'dd/MM')}:\n`,
+        ...map(data, formatGuildMemberDuels),
+        `\nВсего: <b>${data.length}</b> пероснажей ${formatGuildTotalDuels(data)}`,
+      ];
+
+      await ctx.replyWithHTML(reply.join('\n'));
+
+    } else {
+
+      const cond = { $or: [{ 'winner.name': name }, { 'loser.name': name }] };
+      const data = await Duel.find(cond).sort('-ts').limit(5);
+
+      await ctx.replyWithHTML(formatDuels(data, name));
+
+    }
 
     debug('GET /arena', name);
 
@@ -35,12 +56,74 @@ export default async function (ctx) {
 
 }
 
+function formatGuildTotalDuels(duels) {
+  return `<b>${sumBy(duels, 'won') || 0}</b>/<b>${sumBy(duels, 'lost') || 0}</b>`;
+}
 
-// function duelTimeFilter() {
-//   const today = new Date();
-//   today.setHours(10, 0, 0, 0);
-//   return { ts: { $gt, $lt } };
-// }
+function formatGuildMemberDuels(duels) {
+  const {
+    name,
+    won,
+    lost,
+    level,
+  } = duels;
+  return `<code>${level}</code> ${name}: <b>${won}</b>/<b>${lost}</b>`;
+}
+
+
+async function guildDuels(tag) {
+
+  const cond = { $or: [{ 'winner.tag': tag }, { 'loser.tag': tag }] };
+
+  const tf = duelTimeFilter();
+
+  Object.assign(cond, tf);
+
+  const duels = await Duel.find(cond);
+
+  const named = map(duels, duel => {
+
+    const { winner, loser } = duel;
+    const isWinner = winner.tag === tag;
+    const name = isWinner ? winner.name : loser.name;
+    const result = isWinner ? 'won' : 'lost';
+    const opponentName = isWinner ? loser.name : winner.name;
+    const level = isWinner ? winner.level : loser.level;
+
+    return {
+      ...duel,
+      name,
+      result,
+      opponentName,
+      level,
+    };
+
+  });
+
+  const res = map(groupBy(named, 'name'), (nameDuels, name) => {
+    const { won = [], lost = [] } = groupBy(nameDuels, 'result');
+    const { level } = maxBy(nameDuels, 'level');
+    return {
+      name,
+      level,
+      won: won.length,
+      lost: lost.length,
+    };
+  });
+
+  return { tf, res: orderBy(res, ['level', 'name'], ['desc', 'asc']) };
+
+}
+
+
+function duelTimeFilter() {
+  let today = new Date();
+  today.setHours(DUEL_RESET_HOUR, 0, 0, 0);
+  if (today > new Date()) {
+    today = addDays(today, -1);
+  }
+  return { ts: { $gt: today } };
+}
 
 function dateFormat(date) {
   return format(date, 'dd/MM kk:mm');
@@ -56,8 +139,8 @@ function formatDuels(duels, primaryName) {
     return `Арены <b>${primaryName}</b> не найдены`;
   }
 
-  const { ts: minDate } = duels[0];
-  const { ts: maxDate } = last(duels);
+  const { ts: maxDate } = duels[0];
+  const { ts: minDate } = last(duels);
 
   return [
     `Арены <b>${primaryName}</b> c ${dateFormat(minDate)} по ${dateFormat(maxDate)}`,
@@ -77,7 +160,7 @@ function formatDuels(duels, primaryName) {
 
   function opponentFormat({ castle, tag, name }) {
     return filter([
-      '∙\t',
+      '\t',
       castle,
       tag ? `[${tag}]` : '',
       name,

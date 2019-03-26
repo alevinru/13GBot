@@ -8,6 +8,7 @@ import * as triggers from './middleware/triggers';
 import * as guild from './middleware/guild';
 import * as hero from './middleware/hero';
 import arena from './middleware/arena';
+import * as trades from './middleware/trades';
 
 import * as f from './etc/filters';
 
@@ -51,6 +52,7 @@ export default function (bot, BOT_USER_NAME) {
   bot.on('message', Telegraf.optional(f.fromCWFilterIf(f.levelUpFilter), hero.greetLevelup));
   bot.command('equip', hero.getAllEquip);
   bot.hears(/^\/arena[ ](.*)$/, arena);
+  bot.hears(/^\/sales_([a-z0-9]{1,2}\d+)[ _]?(\d+)?$/, trades.itemStats);
 
   /*
   Other
