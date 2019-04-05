@@ -42,8 +42,12 @@ export default async function (ctx) {
 
     } else {
 
-      const cond = { $or: [{ 'winner.name': name }, { 'loser.name': name }] };
-      const data = await Duel.find(cond).sort('-ts').limit(5);
+      const cond = {
+        $or: [{ 'winner.name': name }, { 'loser.name': name }],
+        ...duelTimeFilter(shift),
+      };
+
+      const data = await Duel.find(cond).sort('-ts');
 
       await ctx.replyWithHTML(formatDuels(data, name));
 
@@ -138,7 +142,7 @@ function duelTimeFilter(shift) {
 }
 
 function dateFormat(date) {
-  return format(date, 'dd/MM kk:mm');
+  return format(date, 'dd/MM');
 }
 
 
@@ -151,11 +155,16 @@ function formatDuels(duels, primaryName) {
     return `Арены <b>${primaryName}</b> не найдены`;
   }
 
-  const { ts: maxDate } = duels[0];
-  const { ts: minDate } = last(duels);
+  const { ts: maxTs } = duels[0];
+  const { ts: minTs } = last(duels);
+
+  const minDate = dateFormat(minTs);
+  const maxDate = dateFormat(maxTs);
+
+  const period = minDate !== maxDate ? `c ${minDate} по ${maxDate}` : `за ${minDate}`;
 
   return [
-    `Арены <b>${primaryName}</b> c ${dateFormat(minDate)} по ${dateFormat(maxDate)}`,
+    `Арены <b>${primaryName}</b> ${period}`,
     `Победил${opponentList(wonOver)}`,
     `Проиграл${opponentList(lostTo)}`,
   ].join('\n\n');
