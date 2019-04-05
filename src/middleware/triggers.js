@@ -108,6 +108,7 @@ export async function executeTrigger(ctx, next) {
 
   if (!text) {
     await next();
+    return;
   }
 
   try {
